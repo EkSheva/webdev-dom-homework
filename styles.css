@@ -117,6 +117,10 @@ body {
     resize: none;
   }
 
+  .error {
+    background-color: red;
+  }
+
   .add-form-row {
     display: flex;
     justify-content: flex-end;
