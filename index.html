@@ -71,13 +71,13 @@
   const now = formattedDate + ' ' + formattedTime;
 
   buttonSent.addEventListener("click", () => {
-    // userName.classlist.remove("error");
-    // userText.classlist.remove("error");
+    // userName.classList.remove("error");
+    // userText.classList.remove("error");
     document.querySelector('.add-form-name').style.backgroundColor = 'white';
     document.querySelector('.add-form-text').style.backgroundColor = 'white';
     if (userName.value === "" || userText.value === "") {
-      // userName.classlist.add("error");
-      // userText.classlist.add("error");
+      // userName.classList.add("error");
+      // userText.classList.add("error");
       document.querySelector('.add-form-name').style.backgroundColor = 'red';
       document.querySelector('.add-form-text').style.backgroundColor = 'red';
 
