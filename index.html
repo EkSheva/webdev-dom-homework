@@ -58,8 +58,8 @@
 
 <script>
   "use strict";
-  const userName = document.getElementById("name");
-  const userText = document.getElementById("text");
+  let userName = document.getElementById("name");
+  let userText = document.getElementById("text");
   const buttonSent = document.getElementById("button");
   const commentsAll = document.querySelector(".comments");
 
@@ -91,7 +91,8 @@
     const buttonElements = document.querySelectorAll(".like-button");
 
     buttonElements.forEach((buttonElement, index) => {
-      buttonElement.addEventListener("click", () => {
+      buttonElement.addEventListener("click", (event) => {
+        event.stopPropagation();
         const commentIndex = parseInt(buttonElement.dataset.index);
 
         containerComments[commentIndex].isLike = !containerComments[commentIndex].isLike;
@@ -107,12 +108,25 @@
     });
   };
 
+  const answerComment = () => {
+    const answerElements = document.querySelectorAll("li");
+
+    answerElements.forEach((answerElement, index) => {
+      answerElement.addEventListener("click", () => {
+        const commentIndex = parseInt(answerElement.dataset.answer);
+        userName.value = containerComments[commentIndex].name;
+        userText.value = containerComments[commentIndex].text;
+      });
+    });
+  };
+
   const renderComments = () => {
     commentsAll.innerHTML = '';
 
     containerComments.forEach((user, index) => {
       const li = document.createElement('li');
       li.classList.add('comment');
+      li.dataset.answer = index;
 
       const header = document.createElement('div');
       header.classList.add('comment-header');
@@ -167,6 +181,7 @@
     });
 
     initLike();
+    answerComment();
   };
 
   renderComments();
@@ -184,28 +199,20 @@
       return;
 
     } else {
-      const newEl = `<li class="comment"><div class="comment-header">
-          <div>${userName.value}</div>
-          <div>${now}</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            ${userText.value}
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">0</span>
-            <button class="like-button"></button>
-          </div>
-        </div></li>`;
+      const newComment = {
+        name: userName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        date: now,
+        text: userText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        counter: 0,
+        isLike: false
+      };
 
-      containerComments.push({ name: userName.value, date: now, text: userText.value, counter: 0, isLike: false });
-
-      renderComments();
+      containerComments.push(newComment);
 
       userName.value = "";
       userText.value = "";
+
+      renderComments();
     }
   });
 
