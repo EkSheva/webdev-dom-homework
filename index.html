@@ -63,13 +63,6 @@
   const buttonSent = document.getElementById("button");
   const commentsAll = document.querySelector(".comments");
 
-  const date = new Date();
-  let optionsTime = { hour: '2-digit', minute: '2-digit', hour12: false };
-  let optionsDate = { day: '2-digit', month: '2-digit', year: '2-digit' };
-  let formattedTime = date.toLocaleString('ru-RU', optionsTime);
-  let formattedDate = date.toLocaleDateString('ru-RU', optionsDate);
-  const now = formattedDate + ' ' + formattedTime;
-
   const containerComments = [
     {
       name: "Глеб Фокин",
@@ -174,6 +167,13 @@
   buttonSent.addEventListener("click", () => {
     document.querySelector('.add-form-name').style.backgroundColor = 'white';
     document.querySelector('.add-form-text').style.backgroundColor = 'white';
+
+    let date = new Date();
+    let optionsTime = { hour: '2-digit', minute: '2-digit', hour12: false };
+    let optionsDate = { day: '2-digit', month: '2-digit', year: '2-digit' };
+    let formattedTime = date.toLocaleString('ru-RU', optionsTime);
+    let formattedDate = date.toLocaleDateString('ru-RU', optionsDate);
+    let now = formattedDate + ' ' + formattedTime;
 
     if (userName.value === "" || userText.value === "") {
       document.querySelector('.add-form-name').style.backgroundColor = 'red';
