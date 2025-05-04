@@ -107,8 +107,7 @@
     answerElements.forEach((answerElement, index) => {
       answerElement.addEventListener("click", () => {
         const commentIndex = parseInt(answerElement.dataset.answer);
-        userName.value = containerComments[commentIndex].name;
-        userText.value = containerComments[commentIndex].text;
+        userText.value = `${containerComments[commentIndex].name}: ${containerComments[commentIndex].text}`;
       });
     });
   };
@@ -200,9 +199,9 @@
 
     } else {
       const newComment = {
-        name: userName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        name: userName.value,
         date: now,
-        text: userText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        text: userText.value,
         counter: 0,
         isLike: false
       };
