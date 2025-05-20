@@ -22,19 +22,28 @@
   </div>
 </body>
 
- <!-- <script type="module" src="./index.js"></script> -->
+<!-- <script type="module" src="./index.js"></script> -->
 <script>
   "use strict";
   let userName = document.getElementById("name");
   let userText = document.getElementById("text");
   const buttonSent = document.getElementById("button");
-  const commentsAll = document.querySelector(".comments");
+  let commentsAll = document.querySelector(".comments");
 
   let comments = [];
 
   const updateComments = (newComments) => {
     comments = newComments
   };
+
+  fetch(`https://wedev-api.sky.pro/api/v1/:sheverdyaeva/comments`)
+    .then((reponse) => {
+      return reponse.json()
+    })
+    .then((data) => {
+      updateComments(data.comments);
+      renderComments();
+    });
 
   const initLike = () => {
     const buttonElements = document.querySelectorAll(".like-button");
@@ -131,17 +140,6 @@
     initLike();
     answerComment();
   };
-
-  // renderComments();
-
-  fetch(`https://wedev-api.sky.pro/api/v1/:sheverdyaeva/comments`)
-    .then((reponse) => {
-      return reponse.json()
-    })
-    .then((data) => {
-      updateComments(data.comments);
-      renderComments();
-    });
 
   buttonSent.addEventListener("click", () => {
     document.querySelector('.add-form-name').style.backgroundColor = 'white';
