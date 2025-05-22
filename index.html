@@ -29,29 +29,31 @@
   let userText = document.getElementById("text");
   const buttonSent = document.getElementById("button");
   let commentsAll = document.querySelector(".comments");
-
   let comments = [];
 
   const updateComments = (newComments) => {
     comments = newComments
   };
 
-  fetch(`https://wedev-api.sky.pro/api/v1/:sheverdyaeva/comments`)
-    .then((reponse) => {
-      return reponse.json()
-    })
-    .then((data) => {
-      updateComments(data.comments);
-      renderComments();
-    });
+  const fetchData = () => {
+    fetch(`https://wedev-api.sky.pro/api/v1/:sheverdyaeva/comments`)
+      .then((reponse) => {
+        return reponse.json()
+      })
+      .then((data) => {
+        updateComments(data.comments);
+        renderComments();
+      });
+  };
+  fetchData();
 
   const initLike = () => {
     const buttonElements = document.querySelectorAll(".like-button");
 
-    buttonElements.forEach((buttonElement, index) => {
+    buttonElements.forEach((buttonElement, id) => {
       buttonElement.addEventListener("click", (event) => {
         event.stopPropagation();
-        const commentIndex = parseInt(buttonElement.dataset.index);
+        const commentIndex = parseInt(buttonElement.dataset.id);
 
         comments[commentIndex].isLiked = !comments[commentIndex].isLiked;
         if (comments[commentIndex].isLiked) {
@@ -69,7 +71,7 @@
   const answerComment = () => {
     const answerElements = document.querySelectorAll("li");
 
-    answerElements.forEach((answerElement, index) => {
+    answerElements.forEach((answerElement, id) => {
       answerElement.addEventListener("click", () => {
         const commentIndex = parseInt(answerElement.dataset.answer);
         userText.value = `${comments[commentIndex].author.name}: ${comments[commentIndex].text}`;
@@ -78,12 +80,32 @@
   };
 
   const renderComments = () => {
+    // const buttonElements = document.querySelectorAll(".like-button");
+    // commentsAll.innerHTML = comments.map((comment, id) => {
+    //   return `<li class="comment" data-id=${id}>
+    //       <div class="comment-header">
+    //         <div>${comment.author.name}</div>
+    //         <div>${comment.date}</div>
+    //       </div>
+    //       <div class="comment-body">
+    //         <div class="comment-text">
+    //          ${comment.text}
+    //         </div>
+    //       </div>
+    //       <div class="comment-footer">
+    //         <div class="likes">
+    //           <span class="likes-counter">${comment.likes}</span>
+    //           <button data-id=${id} class="like-button ${comment.isLiked ? '-active-like' : ''}"></button>
+    //         </div>
+    //       </div>
+    //     </li>`
+    // }).join("");
     commentsAll.innerHTML = '';
 
-    comments.forEach((user, index) => {
+    comments.forEach((user, id) => {
       const li = document.createElement('li');
       li.classList.add('comment');
-      li.dataset.answer = index;
+      li.dataset.answer = id;
 
       const header = document.createElement('div');
       header.classList.add('comment-header');
@@ -118,7 +140,7 @@
 
       const likeButton = document.createElement('button');
       likeButton.classList.add('like-button');
-      likeButton.dataset.index = index;
+      likeButton.dataset.id = id;
 
       if (user.isLiked) {
         likeButton.classList.add('-active-like');
@@ -162,6 +184,8 @@
 
     } else {
       const newComment = {
+        // text: userText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        // name: userName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;")
         name: userName.value,
         date: date,
         text: userText.value,
@@ -177,13 +201,18 @@
           return reponse.json()
         })
         .then((data) => {
-          updateComments(data.comments);
-          renderComments();
+          if (data.result === "ok") {
+            fetchData();
+          } else {
+            console.error("Неизвестный формат");
+          }
+        })
+        .catch(error => {
+          console.error("Ошибка", error);
         });
 
       userName.value = "";
       userText.value = "";
-
     }
   });
 
