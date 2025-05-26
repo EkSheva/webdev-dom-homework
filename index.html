@@ -10,40 +10,6 @@
 <body>
   <div class="container">
     <ul class="comments">
-      <!-- <li class="comment">
-        <div class="comment-header">
-          <div>Глеб Фокин</div>
-          <div>12.02.22 12:18</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Это будет первый комментарий на этой странице
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">3</span>
-            <button class="like-button"></button>
-          </div>
-        </div>
-      </li>
-      <li class="comment">
-        <div class="comment-header">
-          <div>Варвара Н.</div>
-          <div>13.02.22 19:22</div>
-        </div>
-        <div class="comment-body">
-          <div class="comment-text">
-            Мне нравится как оформлена эта страница! ❤
-          </div>
-        </div>
-        <div class="comment-footer">
-          <div class="likes">
-            <span class="likes-counter">75</span>
-            <button class="like-button -active-like"></button>
-          </div>
-        </div>
-      </li> -->
     </ul>
     <div class="add-form">
       <input id="name" type="text" class="add-form-name" placeholder="Введите ваше имя" value="" />
@@ -56,43 +22,45 @@
   </div>
 </body>
 
+<!-- <script type="module" src="./index.js"></script> -->
 <script>
   "use strict";
   let userName = document.getElementById("name");
   let userText = document.getElementById("text");
   const buttonSent = document.getElementById("button");
-  const commentsAll = document.querySelector(".comments");
+  let commentsAll = document.querySelector(".comments");
+  let comments = [];
 
-  const containerComments = [
-    {
-      name: "Глеб Фокин",
-      date: "12.02.22 12:18",
-      text: "Это будет первый комментарий на этой странице",
-      counter: 3,
-      isLike: false
-    },
-    {
-      name: "Варвара Н",
-      date: "13.02.22 19:22",
-      text: "Мне нравится как оформлена эта страница! ❤",
-      counter: 75,
-      isLike: true
-    }
-  ];
+  const updateComments = (newComments) => {
+    comments = newComments
+  };
+
+  const fetchData = () => {
+    fetch(`https://wedev-api.sky.pro/api/v1/:sheverdyaeva/comments`)
+      .then((reponse) => {
+        return reponse.json()
+      })
+      .then((data) => {
+        updateComments(data.comments);
+        renderComments();
+      });
+  };
+
+  fetchData();
 
   const initLike = () => {
     const buttonElements = document.querySelectorAll(".like-button");
 
-    buttonElements.forEach((buttonElement, index) => {
+    buttonElements.forEach((buttonElement, id) => {
       buttonElement.addEventListener("click", (event) => {
         event.stopPropagation();
-        const commentIndex = parseInt(buttonElement.dataset.index);
+        const commentIndex = parseInt(buttonElement.dataset.id);
 
-        containerComments[commentIndex].isLike = !containerComments[commentIndex].isLike;
-        if (containerComments[commentIndex].isLike) {
-          containerComments[commentIndex].counter++;
+        comments[commentIndex].isLiked = !comments[commentIndex].isLiked;
+        if (comments[commentIndex].isLiked) {
+          comments[commentIndex].likes++;
         } else {
-          containerComments[commentIndex].counter--;
+          comments[commentIndex].likes--;
         }
 
         renderComments();
@@ -104,27 +72,47 @@
   const answerComment = () => {
     const answerElements = document.querySelectorAll("li");
 
-    answerElements.forEach((answerElement, index) => {
+    answerElements.forEach((answerElement, id) => {
       answerElement.addEventListener("click", () => {
         const commentIndex = parseInt(answerElement.dataset.answer);
-        userText.value = `${containerComments[commentIndex].name}: ${containerComments[commentIndex].text}`;
+        userText.value = `${comments[commentIndex].author.name}: ${comments[commentIndex].text}`;
       });
     });
   };
 
   const renderComments = () => {
+    // const buttonElements = document.querySelectorAll(".like-button");
+    // commentsAll.innerHTML = comments.map((comment, id) => {
+    //   return `<li class="comment" data-id=${id}>
+    //       <div class="comment-header">
+    //         <div>${comment.author.name}</div>
+    //         <div>${comment.date}</div>
+    //       </div>
+    //       <div class="comment-body">
+    //         <div class="comment-text">
+    //          ${comment.text}
+    //         </div>
+    //       </div>
+    //       <div class="comment-footer">
+    //         <div class="likes">
+    //           <span class="likes-counter">${comment.likes}</span>
+    //           <button data-id=${id} class="like-button ${comment.isLiked ? '-active-like' : ''}"></button>
+    //         </div>
+    //       </div>
+    //     </li>`
+    // }).join("");
     commentsAll.innerHTML = '';
 
-    containerComments.forEach((user, index) => {
+    comments.forEach((user, id) => {
       const li = document.createElement('li');
       li.classList.add('comment');
-      li.dataset.answer = index;
+      li.dataset.answer = id;
 
       const header = document.createElement('div');
       header.classList.add('comment-header');
 
       const nameDiv = document.createElement('div');
-      nameDiv.textContent = user.name;
+      nameDiv.textContent = user.author.name;
 
       const dateDiv = document.createElement('div');
       dateDiv.textContent = user.date;
@@ -149,16 +137,16 @@
 
       const counterSpan = document.createElement('span');
       counterSpan.classList.add('likes-counter');
-      counterSpan.textContent = user.counter;
+      counterSpan.textContent = user.likes;
 
       const likeButton = document.createElement('button');
       likeButton.classList.add('like-button');
-      likeButton.dataset.index = index;
+      likeButton.dataset.id = id;
 
-      if (user.isLike) {
+      if (user.isLiked) {
         likeButton.classList.add('-active-like');
       }
-      // (user.isLike ? 'likeButton.classList.add('-active-like')' : '');
+      // (user.isLiked ? 'likeButton.classList.add('-active-like')' : '');
 
       likes.appendChild(counterSpan);
       likes.appendChild(likeButton);
@@ -176,18 +164,16 @@
     answerComment();
   };
 
-  renderComments();
-
   buttonSent.addEventListener("click", () => {
     document.querySelector('.add-form-name').style.backgroundColor = 'white';
     document.querySelector('.add-form-text').style.backgroundColor = 'white';
 
-    let date = new Date();
+    let dates = new Date();
     let optionsTime = { hour: '2-digit', minute: '2-digit', hour12: false };
     let optionsDate = { day: '2-digit', month: '2-digit', year: '2-digit' };
-    let formattedTime = date.toLocaleString('ru-RU', optionsTime);
-    let formattedDate = date.toLocaleDateString('ru-RU', optionsDate);
-    let now = formattedDate + ' ' + formattedTime;
+    let formattedTime = dates.toLocaleString('ru-RU', optionsTime);
+    let formattedDate = dates.toLocaleDateString('ru-RU', optionsDate);
+    let date = formattedDate + ' ' + formattedTime;
 
     if (userName.value === "" || userText.value === "") {
       document.querySelector('.add-form-name').style.backgroundColor = 'red';
@@ -195,23 +181,37 @@
 
       alert("Заполните все поля");
 
-      return;
-
     } else {
       const newComment = {
+        // text: userText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
+        // name: userName.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;")
         name: userName.value,
-        date: now,
+        date: date,
         text: userText.value,
-        counter: 0,
-        isLike: false
+        likes: 0,
+        isLiked: false
       };
 
-      containerComments.push(newComment);
+      fetch(`https://wedev-api.sky.pro/api/v1/:sheverdyaeva/comments`, {
+        method: "POST",
+        body: JSON.stringify(newComment),
+      })
+        .then((reponse) => {
+          return reponse.json()
+        })
+        .then((data) => {
+          if (data.result === "ok") {
+            fetchData();
+          } else {
+            console.error("Неизвестный формат");
+          }
+        })
+        .catch(error => {
+          console.error("Ошибка", error);
+        });
 
       userName.value = "";
       userText.value = "";
-
-      renderComments();
     }
   });
 
