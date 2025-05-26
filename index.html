@@ -35,6 +35,8 @@
     comments = newComments
   };
 
+  commentsAll.textContent = 'Идет загрузка...';
+
   const fetchData = () => {
     fetch(`https://wedev-api.sky.pro/api/v1/:sheverdyaeva/comments`)
       .then((reponse) => {
@@ -45,7 +47,16 @@
         renderComments();
       });
   };
+
   fetchData();
+
+  function delay(interval = 300) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, interval);
+    });
+  }
 
   const initLike = () => {
     const buttonElements = document.querySelectorAll(".like-button");
@@ -54,16 +65,19 @@
       buttonElement.addEventListener("click", (event) => {
         event.stopPropagation();
         const commentIndex = parseInt(buttonElement.dataset.id);
+        buttonElement.classList.add('-loading-like');
 
-        comments[commentIndex].isLiked = !comments[commentIndex].isLiked;
-        if (comments[commentIndex].isLiked) {
-          comments[commentIndex].likes++;
-        } else {
-          comments[commentIndex].likes--;
-        }
+        delay(2000).then(() => {
+          comments[commentIndex].isLiked = !comments[commentIndex].isLiked;
+          if (comments[commentIndex].isLiked) {
+            comments[commentIndex].likes++;
+          } else {
+            comments[commentIndex].likes--;
+          }
+          buttonElement.classList.remove('-loading-like');
 
-        renderComments();
-
+          renderComments();
+        });
       });
     });
   };
@@ -180,8 +194,6 @@
 
       alert("Заполните все поля");
 
-      return;
-
     } else {
       const newComment = {
         // text: userText.value.replaceAll("<", "&lt;").replaceAll(">", "&gt;"),
@@ -193,26 +205,26 @@
         isLiked: false
       };
 
+      const form = document.querySelector('.add-form');
+      form.classList.add('loading');
+      const load = document.createElement('div');
+      load.textContent = 'Загружаем комментарий...';
+      const container = document.querySelector('.container')
+      container.appendChild(load);
+
       fetch(`https://wedev-api.sky.pro/api/v1/:sheverdyaeva/comments`, {
         method: "POST",
         body: JSON.stringify(newComment),
       })
-        .then((reponse) => {
-          return reponse.json()
+        .then(() => {
+          return fetchData();
         })
-        .then((data) => {
-          if (data.result === "ok") {
-            fetchData();
-          } else {
-            console.error("Неизвестный формат");
-          }
+        .then(() => {
+          userName.value = "";
+          userText.value = "";
+          load.classList.add('loading');
+          form.classList.remove('loading');
         })
-        .catch(error => {
-          console.error("Ошибка", error);
-        });
-
-      userName.value = "";
-      userText.value = "";
     }
   });
 
