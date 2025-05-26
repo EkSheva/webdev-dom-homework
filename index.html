@@ -45,6 +45,7 @@
         renderComments();
       });
   };
+
   fetchData();
 
   const initLike = () => {
@@ -179,8 +180,6 @@
       document.querySelector('.add-form-text').style.backgroundColor = 'red';
 
       alert("Заполните все поля");
-
-      return;
 
     } else {
       const newComment = {
