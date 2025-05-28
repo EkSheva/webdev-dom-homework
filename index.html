@@ -22,8 +22,8 @@
   </div>
 </body>
 
-<!-- <script type="module" src="./index.js"></script> -->
-<script>
+<script type="module" src="./index.js"></script>
+<!-- <script>
   "use strict";
   let userName = document.getElementById("name");
   let userText = document.getElementById("text");
@@ -202,7 +202,8 @@
         date: date,
         text: userText.value,
         likes: 0,
-        isLiked: false
+        isLiked: false,
+        forceError: true,
       };
 
       const form = document.querySelector('.add-form');
@@ -212,16 +213,35 @@
       const container = document.querySelector('.container')
       container.appendChild(load);
 
-      fetch(`https://wedev-api.sky.pro/api/v1/:sheverdyaeva/comments`, {
+      fetch(`https://wedev-api.sky.pro/api/todos/with-error`, {
         method: "POST",
         body: JSON.stringify(newComment),
       })
+        .then((response) => {
+          if (response.status === 201) {
+            return response.json()
+          } else {
+            if (response.status === 500) {
+              throw new Error('Сервер сломался, попробуй позже')
+            }
+            if (response.status === 400) {
+              throw new Error('Имя и комментарий должны быть не короче 3 символов')
+            }
+            throw new Error('Кажется, у вас сломался интернет, попробуйте позже')
+          }
+        })
         .then(() => {
           return fetchData();
         })
         .then(() => {
           userName.value = "";
           userText.value = "";
+        })
+        .catch((error) => {
+          alert(error.message);
+          console.log(error);
+        })
+        .finally(() => {
           load.classList.add('loading');
           form.classList.remove('loading');
         })
@@ -229,6 +249,6 @@
   });
 
   console.log("It works!");
-</script>
+</script> -->
 
 </html>
