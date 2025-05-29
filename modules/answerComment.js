@@ -1,5 +1,5 @@
 import { comments } from './comments.js'
-import { userText } from '/webdev-dom-homework/index.js'
+import { userText } from '../index.js'
 
 export const answerComment = () => {
     const answerElements = document.querySelectorAll("li");
