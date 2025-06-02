@@ -2,10 +2,9 @@ import { comments } from './comments.js'
 import { initLike } from './initLike.js'
 import { answerComment } from './answerComment.js'
 
-// export const commentsAll = document.querySelector(".comments");
+export const commentsAll = document.querySelector(".comments");
 
 export const renderComments = () => {
-    const commentsAll = document.querySelector(".comments");
     commentsAll.innerHTML = '';
 
     comments.forEach((user, id) => {
@@ -51,7 +50,6 @@ export const renderComments = () => {
         if (user.isLiked) {
             likeButton.classList.add('-active-like');
         }
-        // (user.isLiked ? 'likeButton.classList.add('-active-like')' : '');
 
         likes.appendChild(counterSpan);
         likes.appendChild(likeButton);

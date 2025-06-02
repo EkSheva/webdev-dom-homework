@@ -164,3 +164,7 @@ body {
 .-loading-like {
    animation: rotating 2s linear infinite;
 }
+
+.-error {
+  border: 1px solid red;
+}

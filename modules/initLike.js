@@ -1,6 +1,6 @@
 import { renderComments } from './renderComments.js'
 import { comments } from './comments.js'
-// import { answerComment } from './answerComment.js'
+import { delay } from './delay.js'
 
 export const initLike = () => {
     const buttonElements = document.querySelectorAll(".like-button");
@@ -9,23 +9,19 @@ export const initLike = () => {
         buttonElement.addEventListener("click", (event) => {
             event.stopPropagation();
             const commentIndex = parseInt(buttonElement.dataset.id);
+            buttonElement.classList.add('-loading-like');
 
-            comments[commentIndex].isLiked = !comments[commentIndex].isLiked;
-            if (comments[commentIndex].isLiked) {
-                comments[commentIndex].likes++;
-            } else {
-                comments[commentIndex].likes--;
-            }
+            delay(2000).then(() => {
+                comments[commentIndex].isLiked = !comments[commentIndex].isLiked;
+                if (comments[commentIndex].isLiked) {
+                    comments[commentIndex].likes++;
+                } else {
+                    comments[commentIndex].likes--;
+                }
+                buttonElement.classList.remove('-loading-like');
 
-            fetch(`https://wedev-api.sky.pro/api/v1/:sheverdyaeva/comments${id}`)
-                .then((reponse) => {
-                    return reponse.json()
-                })
-                .then((data) => {
-                    updateComments(data.comments);
-                    renderComments();
-                });
-
+                renderComments();
+            });
         });
     });
 };
