@@ -4,6 +4,13 @@ import { answerComment } from './answerComment.js'
 
 export const commentsAll = document.querySelector(".comments");
 
+const dates = new Date();
+let optionsTime = { hour: '2-digit', minute: '2-digit', hour12: false };
+let optionsDate = { day: '2-digit', month: '2-digit', year: '2-digit' };
+let formattedTime = dates.toLocaleString('ru-RU', optionsTime);
+let formattedDate = dates.toLocaleDateString('ru-RU', optionsDate);
+const date = formattedDate + ' ' + formattedTime;
+
 export const renderComments = () => {
     commentsAll.innerHTML = '';
 
@@ -19,7 +26,7 @@ export const renderComments = () => {
         nameDiv.textContent = user.author.name;
 
         const dateDiv = document.createElement('div');
-        dateDiv.textContent = user.date;
+        dateDiv.textContent = date;
 
         header.appendChild(nameDiv);
         header.appendChild(dateDiv);

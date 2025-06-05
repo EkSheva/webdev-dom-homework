@@ -14,7 +14,7 @@ fetchData();
 
 const handlePostClick = () => {
 
-    postComments(userName.value, userText.value)
+    postComments(userName.value, userText.value, date)
         .catch((error) => {
             if (error.message === "Сервер сломался, попробуй позже") {
                 handlePostClick();
@@ -26,12 +26,13 @@ const handlePostClick = () => {
 buttonSent.addEventListener("click", () => {
     document.querySelector('.add-form-name').style.backgroundColor = 'white';
     document.querySelector('.add-form-text').style.backgroundColor = 'white';
-    // let dates = new Date();
-    // let optionsTime = { hour: '2-digit', minute: '2-digit', hour12: false };
-    // let optionsDate = { day: '2-digit', month: '2-digit', year: '2-digit' };
-    // let formattedTime = dates.toLocaleString('ru-RU', optionsTime);
-    // let formattedDate = dates.toLocaleDateString('ru-RU', optionsDate);
-    // let date = formattedDate + ' ' + formattedTime;
+    
+    const dates = new Date();
+    let optionsTime = { hour: '2-digit', minute: '2-digit', hour12: false };
+    let optionsDate = { day: '2-digit', month: '2-digit', year: '2-digit' };
+    let formattedTime = dates.toLocaleString('ru-RU', optionsTime);
+    let formattedDate = dates.toLocaleDateString('ru-RU', optionsDate);
+    const date = formattedDate + ' ' + formattedTime;
 
     if (userName.value === "" || userText.value === "") {
         document.querySelector('.add-form-name').style.backgroundColor = 'red';
@@ -48,7 +49,7 @@ buttonSent.addEventListener("click", () => {
     const container = document.querySelector('.container')
     container.appendChild(load);
 
-    postComments((userName.value), (userText.value)).then(() => {
+    postComments(userName.value, userText.value, date).then(() => {
         renderComments()
         userName.value = "";
         userText.value = "";

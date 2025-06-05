@@ -1,13 +1,14 @@
 import { fetchData } from './fetchData.js';
 import { host } from './fetchData.js'
 
-export const postComments = (name, text) => {
+export const postComments = (name, text,date) => {
     return fetch(host + "/comments", {
         method: "POST",
         body: JSON.stringify({
             name,
             text,
-            forceError: true,
+            date,
+            forceError: false,
         }),
     })
         .then((response) => {
