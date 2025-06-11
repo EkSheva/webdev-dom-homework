@@ -1,42 +1,42 @@
 import { renderComments } from './renderComments.js'
-import { updateComments} from './comments.js'
+import { updateComments } from './comments.js'
 
-const host = 'https://wedev-api.sky.pro/api/v2/:sheverdyaeva';
-const authHost = "https://wedev-api.sky.pro/api/user";
+export const host = 'https://wedev-api.sky.pro/api/v2/:sheverdyaeva'
+export const authHost = 'https://wedev-api.sky.pro/api/user'
 
-export let token ="";
+export let token = ''
 
 export const setToken = (newToken) => {
     token = newToken
-};
+}
 
-export let name ="";
+export let name = ''
 
 export const setName = (newName) => {
     name = newName
-};
+}
 
 export const fetchData = (isFirstLoader) => {
     if (isFirstLoader) {
-        let container = document.querySelector(".container");
+        let container = document.querySelector('.container')
 
-        container.textContent = 'Идет загрузка...';
+        container.textContent = 'Идет загрузка...'
     }
-    return fetch(host + "/comments")
+    return fetch(host + '/comments')
         .then((reponse) => {
             return reponse.json()
         })
         .then((data) => {
-            updateComments(data.comments);
-            renderComments();
-        });
-};
+            updateComments(data.comments)
+            renderComments()
+        })
+}
 
 export const postComments = (name, text, date) => {
-    return fetch(host + "/comments", {
-        method: "POST",
+    return fetch(host + '/comments', {
+        method: 'POST',
         headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
             name,
@@ -55,45 +55,46 @@ export const postComments = (name, text, date) => {
                 if (response.status === 400) {
                     throw new Error('Неверный запрос')
                 }
-                throw new Error('Кажется, у вас сломался интернет, попробуйте позже')
+                throw new Error(
+                    'Кажется, у вас сломался интернет, попробуйте позже',
+                )
             }
         })
         .then(() => {
-            return fetchData();
+            return fetchData()
         })
-};
+}
 
 export const login = (login, password) => {
-    return fetch(authHost + "/login", {
-        method: "POST",
+    return fetch(authHost + '/login', {
+        method: 'POST',
         body: JSON.stringify({
             login,
-            password
+            password,
         }),
     })
-};
+}
 
 export const registration = (name, login, password) => {
     return fetch(authHost, {
-        method: "POST",
+        method: 'POST',
         body: JSON.stringify({
             name,
             login,
-            password
+            password,
         }),
     })
-};
-
+}
 
 // export const like = (id) => {
 //     return fetch(`/comments/${id}/toggle-like`, {
-//         method: "POST"
+//         method: 'POST',
 //     })
 //         .then((reponse) => {
 //             return reponse.json()
 //         })
 //         .then((data) => {
-//             updateLike(data.comments);
-//             renderComments();
-//         });
-// };
+//             updateLike(data.comments)
+//             renderComments()
+//         })
+// }
