@@ -86,15 +86,12 @@ export const registration = (name, login, password) => {
     })
 }
 
-// export const like = (id) => {
-//     return fetch(`/comments/${id}/toggle-like`, {
+// export const like = (likes, isLiked, id) => {
+//     return fetch(authHost + `/comments/${id}/toggle-like`, {
 //         method: 'POST',
+//         body: JSON.stringify({
+//             likes,
+//             isLiked,
+//         }),
 //     })
-//         .then((reponse) => {
-//             return reponse.json()
-//         })
-//         .then((data) => {
-//             updateLike(data.comments)
-//             renderComments()
-//         })
 // }

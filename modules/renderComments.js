@@ -122,6 +122,7 @@ export const renderComments = () => {
         answerComment()
     } else {
         container.appendChild(pEl)
+        initLike()
         document.querySelector('.link-login').addEventListener('click', () => {
             renderLogin()
         })
